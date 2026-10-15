@@ -1,0 +1,2084 @@
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_20",
+      "port": 8100,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_21",
+      "port": 8101,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_22",
+      "port": 8102,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_23",
+      "port": 8103,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_24",
+      "port": 8104,
+      "ssl": true,
+      "timeout_seconds": 30
+    }
+  ],
+  "security_rules": {
+    "max_failed_attempts": 5,
+    "session_timeout_minutes": 60,
+    "require_mfa": true
+  }
+}
+{
+  "system_node_id": "node_cluster_07",
+  "environment": "production_enterprise",
+  "telemetry_enabled": true,
+  "sampling_frequency_hz": 4,
+  "services": [
+    {
+      "service_name": "microservice_0",
+      "port": 8080,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_1",
+      "port": 8081,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_2",
+      "port": 8082,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_3",
+      "port": 8083,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_4",
+      "port": 8084,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_5",
+      "port": 8085,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_6",
+      "port": 8086,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_7",
+      "port": 8087,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_8",
+      "port": 8088,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_9",
+      "port": 8089,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_10",
+      "port": 8090,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_11",
+      "port": 8091,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_12",
+      "port": 8092,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_13",
+      "port": 8093,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_14",
+      "port": 8094,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_15",
+      "port": 8095,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_16",
+      "port": 8096,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_17",
+      "port": 8097,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_18",
+      "port": 8098,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "microservice_19",
+      "port": 8099,
+      "ssl": true,
+      "timeout_seconds": 30
+    },
+    {
+      "service_name": "mi
