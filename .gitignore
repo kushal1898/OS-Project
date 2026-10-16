@@ -1,0 +1,19 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# OS-Project Runtime Metadata & Forensic Artifacts
+.active_pid.json
+test_monitor_dir/.active_pid.json
+test_monitor_dir/.os_journal/
+*.tmp
+*.locked
+*.enc
+*.encrypted
