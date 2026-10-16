@@ -262,7 +262,7 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
     # Combine into a single vertical layout with fixed sub-panel sizes
     combined_layout = Layout()
     combined_layout.split_column(
-        Layout(acm_table, size=5),
+        Layout(acm_table, size=6),
         Layout(log_table)
     )
 
