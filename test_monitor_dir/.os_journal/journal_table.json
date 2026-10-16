@@ -1,0 +1,252 @@
+{
+  "database_01.csv": {
+    "filename": "database_01.csv",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\database_01.csv.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\database_01.csv",
+    "inode": 844424930686480,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4820845
+  },
+  "database_02.csv": {
+    "filename": "database_02.csv",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\database_02.csv.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\database_02.csv",
+    "inode": 844424930686481,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4844506
+  },
+  "database_03.csv": {
+    "filename": "database_03.csv",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\database_03.csv.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\database_03.csv",
+    "inode": 844424930686482,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4877317
+  },
+  "database_04.csv": {
+    "filename": "database_04.csv",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\database_04.csv.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\database_04.csv",
+    "inode": 844424930686483,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4910405
+  },
+  "database_05.csv": {
+    "filename": "database_05.csv",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\database_05.csv.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\database_05.csv",
+    "inode": 844424930686484,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4939961
+  },
+  "dummy_doc_0.txt": {
+    "filename": "dummy_doc_0.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\dummy_doc_0.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\dummy_doc_0.txt",
+    "inode": 844424930686453,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.4967039
+  },
+  "dummy_doc_1.txt": {
+    "filename": "dummy_doc_1.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\dummy_doc_1.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\dummy_doc_1.txt",
+    "inode": 844424930686454,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.499453
+  },
+  "dummy_doc_2.txt": {
+    "filename": "dummy_doc_2.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\dummy_doc_2.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\dummy_doc_2.txt",
+    "inode": 844424930686455,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5020845
+  },
+  "dummy_doc_3.txt": {
+    "filename": "dummy_doc_3.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\dummy_doc_3.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\dummy_doc_3.txt",
+    "inode": 844424930686456,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5047815
+  },
+  "dummy_doc_4.txt": {
+    "filename": "dummy_doc_4.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\dummy_doc_4.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\dummy_doc_4.txt",
+    "inode": 844424930686457,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5075233
+  },
+  "report_01.txt": {
+    "filename": "report_01.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_01.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_01.txt",
+    "inode": 3096224744371560,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5108943
+  },
+  "report_02.txt": {
+    "filename": "report_02.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_02.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_02.txt",
+    "inode": 1125899907397125,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5131106
+  },
+  "report_03.txt": {
+    "filename": "report_03.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_03.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_03.txt",
+    "inode": 844424930686472,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5157943
+  },
+  "report_04.txt": {
+    "filename": "report_04.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_04.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_04.txt",
+    "inode": 844424930686473,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.519041
+  },
+  "report_05.txt": {
+    "filename": "report_05.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_05.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_05.txt",
+    "inode": 844424930686474,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5217283
+  },
+  "report_06.txt": {
+    "filename": "report_06.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_06.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_06.txt",
+    "inode": 844424930686475,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5247943
+  },
+  "report_07.txt": {
+    "filename": "report_07.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_07.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_07.txt",
+    "inode": 844424930686476,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5276268
+  },
+  "report_08.txt": {
+    "filename": "report_08.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_08.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_08.txt",
+    "inode": 844424930686477,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5308924
+  },
+  "report_09.txt": {
+    "filename": "report_09.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_09.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_09.txt",
+    "inode": 844424930686478,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.533903
+  },
+  "report_10.txt": {
+    "filename": "report_10.txt",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\report_10.txt.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\report_10.txt",
+    "inode": 844424930686479,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5369818
+  },
+  "system_log_01.log": {
+    "filename": "system_log_01.log",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\system_log_01.log.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\system_log_01.log",
+    "inode": 844424930686485,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5398357
+  },
+  "system_log_02.log": {
+    "filename": "system_log_02.log",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\system_log_02.log.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\system_log_02.log",
+    "inode": 2251799814239856,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5435443
+  },
+  "system_log_03.log": {
+    "filename": "system_log_03.log",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\system_log_03.log.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\system_log_03.log",
+    "inode": 1407374884107895,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5470212
+  },
+  "system_log_04.log": {
+    "filename": "system_log_04.log",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\system_log_04.log.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\system_log_04.log",
+    "inode": 562949953975929,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.5500991
+  },
+  "system_log_05.log": {
+    "filename": "system_log_05.log",
+    "baseline_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\.os_journal\\system_log_05.log.baseline",
+    "target_path": "D:\\Code Playground\\OS-Project\\test_monitor_dir\\system_log_05.log",
+    "inode": 281474977265280,
+    "size_bytes": 41367,
+    "initial_entropy": 4.4491,
+    "tx_status": "COMMITTED",
+    "timestamp": 1792164061.553338
+  }
+}

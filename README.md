@@ -1,193 +1,267 @@
-# 🛡️ OS Analyzer: Real-Time Activity & Ransomware Behavioral Monitor
-
-An intelligent, lightweight, real-time operating system and filesystem analyzer designed to detect ransomware behavior, rapid encryption attacks, and anomalous process I/O activity through **Shannon Entropy analysis** and live system telemetry.
-
----
-
-## 📌 Project Overview
-
-**OS Analyzer** provides defensive security observability at the endpoint level. Traditional signature-based antivirus solutions often struggle against zero-day or polymorphically encrypted ransomware payloads. OS Analyzer takes a **behavioral and statistical detection** approach by monitoring:
-
-1. **Filesystem Activity**: Capturing real-time file creation, modification, and deletion events in target directories using OS kernel-level notifications.
-2. **Data Randomness (Shannon Entropy)**: Calculating information entropy per modified file on-the-fly. Plaintext documents typically have low entropy ($H \approx 3.0 - 5.0$), whereas AES/RSA-encrypted files exhibit high entropy ($H > 7.5$).
-3. **Hardware Telemetry & Process I/O**: Tracking overall CPU and memory utilization alongside top I/O-consuming processes to pinpoint disk-thrashing or mass-encryption tasks.
-4. **Live Terminal User Interface (TUI)**: Presenting all metrics, event logs, and security alerts inside a multi-panel dashboard built with `rich`.
-
-```
-                  ┌───────────────────────────────────────────────┐
-                  │                 Target Folder                 │
-                  └───────────────────────┬───────────────────────┘
-                                          │ Watchdog Events
-                                          ▼
-┌──────────────────────┐        ┌───────────────────┐        ┌──────────────────────┐
-│  Hardware Telemetry  │        │  File Event Loop  │        │   Shannon Entropy    │
-│  • CPU & Memory %    │        │  • Created        │        │   Calculation Engine │
-│  • Top I/O PIDs      │        │  • Modified       │───────>│   H = -Σ P(x)log2P(x)│
-└──────────┬───────────┘        │  • Deleted        │        └──────────┬───────────┘
-           │                    └─────────┬─────────┘                   │
-           │                              │                             │
-           └────────────────────────┐     │     ┌───────────────────────┘
-                                    ▼     ▼     ▼
-                        ┌───────────────────────────────┐
-                        │      Rich Live Dashboard      │
-                        │  • System Resources & I/O     │
-                        │  • Recent File Events Stream  │
-                        │  • Real-time Security Alerts  │
-                        └───────────────────────────────┘
-```
+# 🛡️ Real-Time OS Resource Utilization & File-Encryption Behavior Analyzer
+> **Course Syllabus Mapping:** BCSE303L — Operating Systems (Textbook: *Operating System Concepts* by Silberschatz, Galvin, and Gagne)  
+> **Architecture Principle:** 1 Class = 1 Exact Syllabus Module (Modules 2, 3, 4, 5, 6, and 7)
 
 ---
 
-## ✨ Key Features
+## 📌 Project Executive Summary
 
-- 🔍 **Real-Time Filesystem Observation**: Powered by `watchdog`, asynchronously capturing file modifications with minimal overhead.
-- 🧮 **Mathematical Entropy Detection**: Implements Shannon Entropy formula ($0.0 \le H \le 8.0$) to distinguish benign document edits from cryptographic overwrites.
-- 🚨 **Automated Alerting**: Instantly flags files exceeding the $7.5$ entropy threshold and displays them in the dedicated Security Alerts panel.
-- 📊 **Process I/O Tracking**: Identifies processes generating high disk read/write throughput using `psutil`.
-- 🖥️ **Interactive Terminal GUI**: Responsive, multi-panel terminal interface updating at 2 Hz without screen flicker.
-- 🧪 **Built-in Ransomware Simulation**: Includes a safe mock script (`mock_encryptor.py`) to simulate ransomware behavior and verify detection alerts in real time.
+Traditional antivirus systems rely on static virus signatures or brittle magic-byte headers, failing against zero-day cryptographic ransomware. **OS-Analyzer** is an educational, real-time operating system behavioral monitor designed to detect and neutralize rapid file encryption attacks using fundamental operating system mechanisms:
 
----
-
-## 📂 Project Structure
-
-```
-os-analyzer/
-├── analyzer.py          # Core engine: Shannon entropy calculation, file watcher, & psutil stats
-├── main.py              # Application entry point: Rich terminal UI layout & live rendering loop
-├── mock_encryptor.py    # Test utility: Creates dummy documents and simulates encryption attacks
-├── requirements.txt     # Python dependencies
-├── test_monitor_dir/    # Target directory monitored by the analyzer
-└── README.md            # Comprehensive project documentation
-```
-
-### Module Breakdown
-
-| File | Description |
-| :--- | :--- |
-| [`analyzer.py`](file:///analyzer.py) | Contains `calculate_entropy()`, `FileMonitorHandler`, and the `OSAnalyzer` class orchestrating watchdog observers, process metrics, and alert queues. |
-| [`main.py`](file:///main.py) | Configures the 4-quadrant layout (`System Resources`, `Top I/O Processes`, `Recent File Events`, `Security Alerts`) and launches the live screen. |
-| [`mock_encryptor.py`](file:///mock_encryptor.py) | Safely generates low-entropy test files, then overwrites them with `os.urandom()` bytes to trigger high-entropy detections. |
+1. **Information Theory & Storage Entropy**: Real-time single-byte **Shannon Entropy** ($0.0 \le H \le 8.0$ bits/byte) to detect cryptographic randomness.
+2. **Process Abstraction & Telemetry**: Live **Process Control Block (PCB)** tracking including process states (`READY/RUNNING` $\to$ `WAITING/STOPPED` $\to$ `TERMINATED`), Resident Set Size (**RSS Working Set** memory), and I/O system calls.
+3. **Concurrency & Synchronization**: Classic **Bounded-Buffer Producer-Consumer Pipeline** synchronized with counting Semaphores and a Mutex Lock.
+4. **Crash Recovery & Journaling**: **Write-Ahead Logging (WAL)** checkpointing file inodes and transaction states (`COMMITTED`, `DIRTY`, `RECOVERED`) with automatic rollback.
+5. **Access Control & Scheduling Defenses**: Separation of **Security Policy** from **OS Mechanisms** — enforcing dynamic CPU scheduling priority demotion, process preemption/suspension, and **Access Control Matrix** permission revocation via `os.chmod`.
 
 ---
 
-## ⚙️ Prerequisites & Installation
+## 🚀 Quickstart & How to Run the Project
 
-### 1. Prerequisites
-- **Python 3.8+** installed on your system.
-- OS: Windows, Linux, or macOS.
+### 1. Prerequisites & Virtual Environment
+Ensure Python 3.8+ is installed. Clone or open the repository in your terminal:
 
-### 2. Clone or Navigate to the Directory
 ```bash
-cd path/to/os-analyzer
-```
+# Windows (PowerShell)
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 
-### 3. Create & Activate a Virtual Environment
+# Linux / macOS
+python3 -m venv venv
+source venv/bin/activate
 
-- **Windows (PowerShell)**:
-  ```powershell
-  python -m venv venv
-  .\venv\Scripts\Activate.ps1
-  ```
-- **Windows (CMD)**:
-  ```cmd
-  python -m venv venv
-  .\venv\Scripts\activate.bat
-  ```
-- **Linux / macOS**:
-  ```bash
-  python3 -m venv venv
-  source venv/bin/activate
-  ```
-
-### 4. Install Dependencies
-```bash
+# Install dependencies (strictly standard library + psutil, watchdog, rich)
 pip install -r requirements.txt
 ```
 
-*(Dependencies: `rich`, `watchdog`, `psutil`)*
+---
+
+### 2. Method A: Single-Command Automated Live Demo (Recommended for Viva)
+
+Run the automated demo in a single terminal. It automatically resets `test_monitor_dir/` with 25 clean plaintext files, launches the 4-panel dashboard, and initiates the encryption workload after 2 seconds:
+
+```bash
+# Automated Ransomware Attack & OS Defense Demo:
+python main.py --demo attack
+
+# Automated Benign Workload Demo (Proves normal apps run unhindered):
+python main.py --demo normal
+```
 
 ---
 
-## 🚀 How to Run the Project
+### 3. Method B: Two-Terminal Interactive Walkthrough
 
-To experience the full detection cycle, it is recommended to use **two terminal windows**:
+For a step-by-step presentation where you control the attack from a separate window:
 
-### Step 1: Start the OS Analyzer Dashboard (Terminal 1)
-
-In your first terminal, launch the main analyzer:
-
+#### Terminal 1 — Start the OS Analyzer Dashboard
 ```bash
 python main.py
 ```
 
-You will see the interactive TUI split into four panels:
-1. **System Resources**: Live CPU and Memory percentage.
-2. **Top I/O Processes**: Top disk-active processes by PID and total byte throughput.
-3. **Recent File Events**: Stream of file creations, edits, deletions, and their computed entropy.
-4. **Security Alerts**: List of flagged suspicious/encrypted files.
-
----
-
-### Step 2: Run the Attack Simulation (Terminal 2)
-
-In a separate terminal (with the virtual environment activated), trigger the mock encryptor:
-
+#### Terminal 2 — Trigger the Workload Simulator
 ```bash
-python mock_encryptor.py
+# Reset baseline files (~40 KB each, Shannon Entropy ≈ 4.45 bits/byte)
+python mock_encryptor.py --reset
+
+# Run normal benign user workload (appends logs, 0 alerts triggered)
+python mock_encryptor.py --mode normal
+
+# Run encryption attack workload (triggers priority throttle, suspension, kill, and journal rollback!)
+python mock_encryptor.py --mode attack --delay 0.25
 ```
 
-**What happens during simulation:**
-1. Generates 5 dummy text files (`dummy_doc_0.txt` to `4.txt`) containing repetitive natural language sentences (Entropy $\approx 3.2 - 4.5$).
-2. Terminal 1 logs `CREATED` events with normal entropy values.
-3. After a brief pause, the script reads each document and overwrites it with cryptographically random bytes (`os.urandom`), simulating ransomware behavior.
-4. Terminal 1 logs `MODIFIED` events with high entropy values ($H \approx 7.9 - 8.0$), highlighted in **red**.
-5. The files are immediately flagged and listed in the **Security Alerts** panel.
+---
+
+### 4. Standalone Engine Self-Test
+To verify all 6 syllabus modules directly via terminal unit tests:
+```bash
+python analyzer.py
+```
 
 ---
 
-### Step 3: Stop the Analyzer
-Press `Ctrl + C` in Terminal 1 to gracefully shut down the watchdog observer and return to standard terminal mode.
+## 🖥️ Terminal Dashboard: The 4 Syllabus Panels
+
+When running [`main.py`](file:///main.py), the terminal splits into a live 2x2 grid where every panel corresponds to a specific course module:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  🛡️  OS-ANALYZER: REAL-TIME RESOURCE UTILIZATION & ENCRYPTION ANALYZER | BCSE303L (Modules 2 - 7)       │
+├──────────────────────────────────────────────────┬─────────────────────────────────────────────────────┤
+│ [MODULE 2 & 5] PCB & Working Set Virtual Memory  │ [MODULE 4] Producer-Consumer IPC & Semaphores       │
+│ • Target PID / PPID: 14208 / 8192                │ • Producer: Watchdog (FileSystemListener)           │
+│ • Process Name: python.exe                       │ • Consumer: OSAnalyzer Engine                       │
+│ • Textbook State: WAITING/STOPPED -> TERMINATED  │ • Bounded Buffer Queue: 2/20 slots                  │
+│ • Scheduling Priority: nice=64 (THROTTLED/IDLE)  │ • empty_slots (Semaphore): 18 (Vacant)              │
+│ • Working Set RSS: 28.45 MB                      │ • filled_slots (Semaphore): 2 (Occupied)            │
+│ • Page Faults: 3,412                             │ • mutex (Lock): UNLOCKED [OK]                       │
+│ • I/O Syscalls: Read: 120 | Write: 84            │ • IPC Throughput: Prod: 42 | Cons: 42               │
+├──────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
+│ [MODULE 6] File System Table & Journal (WAL)     │ [MODULE 7 & 3] Access Control Matrix & Mitigation   │
+│ • report_01.txt | Inode: 844421 | 4.45 -> 7.95   │ • Domain: Workload_Process                          │
+│   Rate: 145.2 KB/s | Status: DIRTY / UNCOMMITTED │   Rights on test_monitor_dir: READ_ONLY (REVOKED)   │
+│ • database_02.csv | Inode: 844422 | 4.45 -> 4.45 │ • OS Action Log:                                    │
+│   Rate: 0.0 KB/s   | Status: RECOVERED           │   [MOD 3] Demoted PID 14208 CPU priority to IDLE    │
+│                                                  │   [MOD 2] Preempted & SUSPENDED PID 14208 (STOPPED) │
+│ Summary: Inodes: 25 | Committed: 21 | Recovered: 4 │   [MOD 7] Revoked WRITE rights; applied S_IREAD     │
+│                                                  │   [MOD 2] Sent SIGKILL to PID 14208 (TERMINATED)    │
+│                                                  │   [MOD 6] Replayed Journal: Restored 4 files        │
+└──────────────────────────────────────────────────┴─────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🔬 Mathematical Detection Logic
+## 🧮 Mathematical Detection Logic (Shannon Entropy)
 
 ### Shannon Entropy Formula
-Shannon Entropy measures the average uncertainty or randomness of byte distributions in a file:
+Shannon Entropy measures the average uncertainty or information density per byte:
 
 $$H(X) = - \sum_{i=0}^{255} P(x_i) \log_2 P(x_i)$$
 
 Where:
-- $P(x_i)$ is the probability (frequency) of byte value $i$ (from `0x00` to `0xFF`) occurring in the file.
-- When all 256 byte values are uniformly distributed (characteristic of strong ciphers and random noise), $H(X) \to 8.0$.
-- Plaintext, source code, and structured formats typically range from $1.5$ to $5.5$.
+- $x_i$ represents each possible byte value from `0x00` (`0`) to `0xFF` (`255`).
+- $P(x_i)$ is the empirical probability of byte $x_i$ appearing in the file: $P(x_i) = \frac{\text{Count}(x_i)}{\text{Total Bytes}}$.
+- The value is strictly bounded: $0.0 \le H(X) \le 8.0$ bits/byte.
 
-### Decision Threshold
-```python
-# Entropy Heuristic in analyzer.py
-if entropy > 7.5:
-    if filepath not in self.suspicious_files:
-        self.suspicious_files.append(filepath)
+### Why Shannon Entropy Works for Ransomware Detection
+| File Type | Typical Shannon Entropy $H(X)$ | Explanation |
+| :--- | :--- | :--- |
+| **Plaintext / Source Code** | $3.0 - 4.5$ bits/byte | Skewed distribution: mostly lowercase letters, vowels, spaces, and punctuation. |
+| **Compiled Binaries / Media** | $5.5 - 6.8$ bits/byte | Moderate distribution: structured headers, opcodes, and compressed metadata. |
+| **Encrypted Ciphertext** | $> 7.2 - 8.0$ bits/byte | **Uniform distribution**: Modern ciphers (AES-256, ChaCha20) output pseudorandom white noise where all 256 byte values appear with equal probability ($\approx 1/256$). |
+
+---
+
+## 🎓 Module-by-Module Viva Explanation Guide (BCSE303L)
+
+Use this section to prepare for your viva and answer professor questions with precision.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                      Syllabus Module Mapping at a Glance                        │
+├──────────┬─────────────────────────────────┬────────────────────────────────────┤
+│ Module   │ Silberschatz Concept             │ Implementing Class in analyzer.py  │
+├──────────┼─────────────────────────────────┼────────────────────────────────────┤
+│ Mod 2    │ OS Structures & System Calls    │ ProcessControlBlockInspector       │
+│ Mod 3    │ CPU Scheduling & Preemption     │ SecurityPolicyAndMechanism         │
+│ Mod 4    │ Threads & Synchronization (IPC) │ BoundedBufferEventQueue            │
+│ Mod 5    │ Memory Management & Virtual Mem │ ProcessControlBlockInspector       │
+│ Mod 6    │ Storage & File System (WAL)     │ WriteAheadJournalManager           │
+│ Mod 7    │ Protection & Security Policy    │ AccessControlMatrix & SecurityPol. │
+└──────────┴─────────────────────────────────┴────────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Configuration & Customization
+### 📑 MODULE 2: Operating System Structures & System Calls
+- **Syllabus Topic**: Process abstraction, Process Control Block (PCB), Process States, and POSIX/Win32 APIs.
+- **Implementing Class**: [`ProcessControlBlockInspector`](file:///analyzer.py#L92)
+- **Live Demo Action**: Watch Panel 1. As the encryptor starts, its textbook state shows `READY/RUNNING`. When defense triggers, it shifts to `WAITING/STOPPED` (via `proc.suspend()`), and finally to `TERMINATED` (via `proc.kill()`).
 
-You can customize the target directory and thresholds directly in the code:
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: What is a Process Control Block (PCB) and what does it contain?**  
+> **Answer:** The PCB is the kernel data structure that stores the complete execution context of an active process. It tracks the Process ID (PID), program counter, CPU scheduling priority, memory working set pointers, and active I/O file descriptors.
 
-1. **Change Monitored Directory**:
-   In [`main.py`](file:///main.py#L74):
-   ```python
-   target_directory = r"C:\path\to\your\custom_directory"
-   ```
-2. **Adjust Entropy Sensitivity**:
-   In [`analyzer.py`](file:///analyzer.py#L77) and [`main.py`](file:///main.py#L58), change `7.5` to your preferred sensitivity threshold.
-3. **Adjust Dashboard Refresh Rate**:
-   In [`main.py`](file:///main.py#L82), tweak `refresh_per_second` and `time.sleep()`.
+> **Q2: Which operating system system calls are involved when terminating the rogue workload?**  
+> **Answer:** On POSIX, the kernel delivers the `SIGSTOP` signal to suspend the task and `SIGKILL` (`kill(pid, 9)`) to immediately deallocate its PCB. On Windows, `psutil` issues the `NtSuspendProcess` and `TerminateProcess` Win32 kernel API calls.
 
 ---
 
-## 🔒 Security Disclaimer
-The included `mock_encryptor.py` is strictly a benign simulation utility designed for testing behavioral detection heuristics inside the local `test_monitor_dir/`. It does not propagate across directories or harm system stability.
+### ⚡ MODULE 3: Process Management & CPU Scheduling
+- **Syllabus Topic**: Preemptive CPU scheduling, process priorities, nice values, and throttling.
+- **Implementing Class**: [`SecurityPolicyAndMechanism.enforce_os_mechanism()`](file:///analyzer.py#L742)
+- **Live Demo Action**: When the workload first begins rapid I/O writes, the policy triggers `THROTTLE_PRIORITY`. The process's scheduling priority is demoted to `IDLE_PRIORITY_CLASS` (Windows) or `nice 19` (POSIX), starving it of CPU time slices.
+
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: Why does the operating system demote the priority of an I/O-burst process?**  
+> **Answer:** In multilevel queue and priority scheduling, deprioritizing an anomalous process via `nice` prevents CPU starvation of critical system tasks. It throttles the attacker's execution rate, buying time for the security monitor to evaluate whether to terminate it.
+
+> **Q2: What is the difference between preemptive and non-preemptive scheduling here?**  
+> **Answer:** Preemptive scheduling allows the OS kernel to forcefully interrupt a running process without its consent via timer interrupts or signals. We demonstrate this by calling `suspend()` to immediately pull the process off the CPU core into the `STOPPED` queue.
+
+---
+
+### 🔄 MODULE 4: Threads & Concurrency / Process Synchronization
+- **Syllabus Topic**: Inter-Process Communication (IPC), Critical Sections, Producer-Consumer Bounded-Buffer, Semaphores, and Mutex Locks.
+- **Implementing Class**: [`BoundedBufferEventQueue`](file:///analyzer.py#L293)
+- **Live Demo Action**: Panel 2 displays the queue occupancy (`N/20 slots`), counting semaphores (`empty_slots` and `filled_slots`), and `mutex` state in real time as file events pass from the Watchdog listener to the analysis consumer.
+
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: Why do we need both semaphores and a mutex lock in the bounded-buffer problem?**  
+> **Answer:** Counting semaphores track resource availability (`empty_slots` prevents buffer overflow, while `filled_slots` prevents underflow on an empty queue). The binary `mutex` lock strictly guards the critical section so concurrent threads do not corrupt the shared queue pointers.
+
+> **Q2: What would happen if we acquired the mutex before waiting on the empty_slots semaphore?**  
+> **Answer:** That would cause a classic **deadlock**: the producer would lock the mutex and sleep waiting for an empty slot. Because it holds the mutex, the consumer could never enter the critical section to consume an item and free a slot.
+
+---
+
+### 🧠 MODULE 5: Memory Management & Virtual Memory
+- **Syllabus Topic**: Working Set Model, Resident Set Size (RSS), Paging, and Page Faults.
+- **Implementing Class**: [`ProcessControlBlockInspector.inspect_process()`](file:///analyzer.py#L125)
+- **Live Demo Action**: Panel 1 displays the live Working Set RSS in Megabytes (`RSS MB`) and cumulative page faults as memory pages are paged in during cryptographic byte allocation.
+
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: What is the Working Set Model and what is Resident Set Size (RSS)?**  
+> **Answer:** The Working Set represents the collection of virtual memory pages actively referenced by a process during a recent time window $\Delta$. RSS is the exact amount of physical RAM allocated to that process, excluding pages swapped to disk.
+
+> **Q2: Why do page faults occur during a file encryption attack?**  
+> **Answer:** When the encryption workload reads massive files or allocates new ciphertext buffers in heap memory, it references virtual pages not yet mapped to physical frames. The Memory Management Unit (MMU) generates page fault interrupts to allocate and map physical memory frames on demand.
+
+---
+
+### 💾 MODULE 6: Storage & File System Management
+- **Syllabus Topic**: Inodes, File System Journaling, Write-Ahead Logging (WAL), and Crash/Attack Recovery.
+- **Implementing Class**: [`WriteAheadJournalManager`](file:///analyzer.py#L398)
+- **Live Demo Action**: Panel 3 tracks inodes and transaction statuses. As files are encrypted, their status turns `DIRTY / UNCOMMITTED`. Once the attack is terminated, the engine triggers **Journal Recovery Replay**, rolling back corrupted files to their clean baseline snapshots (`RECOVERED`).
+
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: What is Write-Ahead Logging (WAL) and how does it maintain file system integrity?**  
+> **Answer:** WAL ensures that before any permanent modification is written to persistent disk blocks, an uncommitted log entry and metadata snapshot are recorded in a dedicated journal log. If a crash or malicious corruption occurs, the file system reads the journal to either replay committed transactions or roll back dirty, uncommitted changes.
+
+> **Q2: What is an inode in an operating system file system?**  
+> **Answer:** An inode (index node) is a kernel data structure that stores all metadata about a file—including file size, disk block pointers, ownership, and permission bits—independent of the file's directory name.
+
+---
+
+### 🛡️ MODULE 7: Protection, Security & Policy vs. Mechanism
+- **Syllabus Topic**: Access Matrix model, Protection Domains, Principle of Least Privilege, and Separation of Policy from Mechanism.
+- **Implementing Classes**: [`AccessControlMatrix`](file:///analyzer.py#L540) & [`SecurityPolicyAndMechanism`](file:///analyzer.py#L636)
+- **Live Demo Action**: Panel 4 displays the live Access Matrix. When high entropy ($H > 7.2$) is detected, the policy decides `PREEMPT_AND_RECOVER`. The mechanism immediately updates `Workload_Process` to `READ_ONLY (WRITE REVOKED)` and invokes `os.chmod(stat.S_IREAD)` to lock the disk blocks against further writes.
+
+#### 💡 Viva Questions & 2-Sentence Model Answers:
+> **Q1: Explain the fundamental OS principle of separating "Policy" from "Mechanism".**  
+> **Answer:** Policy defines *what decisions to make* based on heuristics (e.g., if Shannon Entropy $> 7.2$, flag as an attack), whereas Mechanism specifies *how the OS executes that decision* (e.g., invoking `proc.nice()`, `proc.kill()`, or `os.chmod()`). Separating them allows the system to update security thresholds without altering low-level kernel enforcement code.
+
+> **Q2: How does the Access Matrix enforce the Principle of Least Privilege?**  
+> **Answer:** The Access Matrix explicitly defines the minimal set of rights (Read, Write, Execute) that each Subject/Domain holds over each Object resource. When an anomaly occurs, the OS dynamically contracts the domain by stripping `WRITE` rights, ensuring the process cannot inflict further filesystem damage.
+
+---
+
+## 🏗️ Project Architecture & File Breakdown
+
+```
+os-analyzer/
+├── analyzer.py          # Core Engine: Modules 2, 3, 4, 5, 6, 7 classes + OSAnalyzer orchestrator
+├── main.py              # User Interface: 4-Panel Rich live terminal dashboard + --demo launcher
+├── mock_encryptor.py    # Workload Simulator: Attack (H>7.9), Normal (H~4.3), and Reset utilities
+├── requirements.txt     # Dependencies: psutil, watchdog, rich
+├── test_monitor_dir/    # Monitored directory containing test files and .os_journal/
+└── README.md            # Comprehensive project documentation & viva examination guide
+```
+
+---
+
+## 🔒 Cross-Platform Safety
+
+All process and filesystem interventions are safely wrapped with cross-platform checks:
+- **Scheduling Priority**: Uses `psutil.IDLE_PRIORITY_CLASS` on Windows and `proc.nice(19)` on POSIX/Linux.
+- **Process Suspension**: Invokes `proc.suspend()` across both platforms with `try/except (psutil.NoSuchProcess, psutil.AccessDenied)`.
+- **Permission Locking**: Uses `os.chmod(path, stat.S_IREAD)` to apply read-only protection across NTFS and ext4 filesystems.
+
+---
+
+## 👥 Authors & Academic Context
+- **Course**: Operating Systems (BCSE303L)
+- **Textbook**: *Operating System Concepts* (10th Edition) — Abraham Silberschatz, Peter B. Galvin, Greg Gagne
+- **Implementation**: Pure Python standard library + `psutil`, `watchdog`, and `rich`.
