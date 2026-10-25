@@ -112,6 +112,8 @@ class ProcessControlBlockInspector:
 
     def __init__(self):
         self._prev_io = {}
+        self._last_process_scan_time = time.time()
+        self._cached_pid = None
 
     @staticmethod
     def _map_os_state(raw_status: str) -> str:
@@ -225,10 +227,9 @@ class ProcessControlBlockInspector:
     def find_workload_pid(self, target_dir: str = None) -> int | None:
         """
         Locates the active workload process:
-          1. Checks .active_pid.json written by mock_encryptor.py.
-          2. Checks for python processes executing mock_encryptor.
-          3. Checks for processes with open files in target_dir.
-          4. Falls back to the process with highest disk write throughput.
+          1. Checks .active_pid.json written by mock_encryptor.py (instant: < 0.2ms).
+          2. Verifies cached active PID if still alive.
+          3. Fast rate-limited search for Python processes running mock_encryptor.
         """
         if not HAS_PSUTIL:
             return None
@@ -236,7 +237,7 @@ class ProcessControlBlockInspector:
         current_pid = os.getpid()
         target_abs = os.path.abspath(target_dir) if target_dir else None
 
-        # Priority 1: Check .active_pid.json for direct registration
+        # Priority 1: Check .active_pid.json for direct registration (instant: < 0.2ms)
         candidate_paths = [
             os.path.join(target_abs, ".active_pid.json") if target_abs else None,
             os.path.join(os.getcwd(), ".active_pid.json")
@@ -248,34 +249,43 @@ class ProcessControlBlockInspector:
                         meta = json.load(f)
                     reg_pid = meta.get("pid")
                     if reg_pid and reg_pid != current_pid and psutil.pid_exists(reg_pid):
+                        self._cached_pid = reg_pid
                         return reg_pid
                 except Exception:
                     pass
 
-        for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'io_counters']):
-            try:
-                pid = proc.info['pid']
-                if pid == current_pid or pid == 0:
-                    continue
+        # If cached PID is alive, return immediately
+        if self._cached_pid and psutil.pid_exists(self._cached_pid):
+            return self._cached_pid
 
-                # Check command line for mock_encryptor
-                cmdline = proc.info.get('cmdline') or []
-                cmd_str = " ".join(cmdline).lower()
-                if "mock_encryptor" in cmd_str:
-                    return pid
+        # Priority 2: Throttle full system scan so it doesn't freeze the UI on every frame
+        now = time.time()
+        if now - self._last_process_scan_time < 1.5:
+            return None
+        self._last_process_scan_time = now
 
-                # Check if process has files open in target_dir
-                if target_abs:
-                    try:
+        # Fast scan only looking at Python processes
+        try:
+            for proc in psutil.process_iter(['pid', 'name']):
+                try:
+                    pid = proc.info['pid']
+                    if pid == current_pid or pid == 0:
+                        continue
+                    pname = (proc.info.get('name') or '').lower()
+                    if 'python' in pname:
                         p = psutil.Process(pid)
-                        for f in p.open_files():
-                            if target_abs in os.path.abspath(f.path):
-                                return pid
-                    except (psutil.AccessDenied, psutil.NoSuchProcess):
-                        pass
-
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                continue
+                        cmdline = p.cmdline()
+                        cmd_str = " ".join(cmdline).lower()
+                        if "mock_encryptor" in cmd_str:
+                            self._cached_pid = pid
+                            return pid
+                        if target_abs and any(target_abs.lower() in arg.lower() for arg in cmdline):
+                            self._cached_pid = pid
+                            return pid
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+        except Exception:
+            pass
 
         return None
 
@@ -901,6 +911,10 @@ class OSAnalyzer:
         self.latched_workload_pcb = None
         self.target_workload_pid = None
         self.is_throttled = False
+        self.throttled_time = 0.0
+        self.throttled_files = set()
+        self.demo_mode = None
+        self.demo_launch_time = 0.0
 
         # Watchdog & Consumer Threading
         self.observer = Observer()
@@ -950,12 +964,9 @@ class OSAnalyzer:
         # Checkpoint baseline files
         self.journal_mgr.create_baseline_checkpoint()
 
-        # Seed baseline entropy history
-        for entry in os.listdir(self.target_dir):
-            if entry != ".os_journal":
-                p = os.path.join(self.target_dir, entry)
-                if os.path.isfile(p):
-                    self.file_entropy_history[p] = calculate_entropy(p)
+        # Seed baseline entropy history directly from journal checkpoint (instant)
+        for fname, rec in self.journal_mgr.journal_table.items():
+            self.file_entropy_history[rec["target_path"]] = rec.get("initial_entropy", 4.45)
 
         self.running = True
         self.observer.schedule(self.handler, path=self.target_dir, recursive=False)
@@ -1048,20 +1059,32 @@ class OSAnalyzer:
 
                 # Locate offending workload PID
                 target_pid = self.pcb_inspector.find_workload_pid(self.target_dir)
+                if target_pid:
+                    self.target_workload_pid = target_pid
 
                 # Graduated Two-Stage Defense Escalation (Syllabus Module 3 -> Modules 2, 7, 6):
                 # Stage 1: First high-entropy anomaly demotes CPU scheduling nice (Module 3)
-                # Stage 2: Sustained / subsequent violation escalates to preemption, SIGKILL & WAL rollback (Modules 2, 7, 6)
+                # Stage 2: Sustained / subsequent violation on new file escalates to preemption, SIGKILL & WAL rollback (Modules 2, 7, 6)
                 if not self.is_throttled:
                     decision = "THROTTLE_PRIORITY"
                     self.is_throttled = True
+                    self.throttled_time = time.time()
+                    self.throttled_files = {filepath}
                 else:
-                    decision = "PREEMPT_AND_RECOVER"
+                    is_new_anomalous_file = filepath not in self.throttled_files
+                    sustained_duration = (time.time() - self.throttled_time) >= 1.0
+
+                    if is_new_anomalous_file or sustained_duration:
+                        decision = "PREEMPT_AND_RECOVER"
+                        self.throttled_files.add(filepath)
+                    else:
+                        decision = "NORMAL"
 
                 if decision == "PREEMPT_AND_RECOVER":
                     # Latch the terminated PCB snapshot before killing
-                    if target_pid:
-                        self._latch_terminated_pcb(target_pid)
+                    effective_pid = target_pid or self.target_workload_pid or self.pcb_inspector.find_workload_pid(self.target_dir)
+                    if effective_pid:
+                        self._latch_terminated_pcb(effective_pid)
                     # Pause watchdog event ingestion during recovery rewrite
                     self.is_recovering = True
                     self.recovery_in_progress_until = time.time() + 2.5
@@ -1069,7 +1092,7 @@ class OSAnalyzer:
                 # Enforce OS Mechanism
                 action_logs = self.security.enforce_os_mechanism(
                     decision=decision,
-                    pid=target_pid,
+                    pid=effective_pid if decision == "PREEMPT_AND_RECOVER" else (target_pid or self.target_workload_pid),
                     target_dir=self.target_dir,
                     journal_mgr=self.journal_mgr,
                     acm=self.acm
@@ -1133,17 +1156,23 @@ class OSAnalyzer:
         Returns live PCB while process runs; pins TERMINATED snapshot once killed.
         Never falls back to random desktop applications.
         """
-        pid = self.pcb_inspector.find_workload_pid(self.target_dir)
+        # Priority 1: If workload was terminated, return the pinned terminated PCB snapshot immediately!
+        if self.latched_workload_pcb:
+            return dict(self.latched_workload_pcb)
+
+        # Priority 2: Check cached target workload PID
+        pid = self.target_workload_pid
+        if not pid or not (HAS_PSUTIL and psutil.pid_exists(pid)):
+            pid = self.pcb_inspector.find_workload_pid(self.target_dir)
+            if pid:
+                self.target_workload_pid = pid
+
         if pid and HAS_PSUTIL and psutil.pid_exists(pid):
             pcb = self.pcb_inspector.inspect_process(pid)
             if "TERMINATED" not in pcb.get("os_state", ""):
                 if "python" in pcb.get("process_name", "").lower():
                     pcb["process_name"] = "python.exe (mock_encryptor.py)"
                 return pcb
-
-        # If workload was terminated, return the pinned terminated PCB snapshot
-        if self.latched_workload_pcb:
-            return dict(self.latched_workload_pcb)
 
         # Clean neutral idle state when no workload has run
         return {
@@ -1188,6 +1217,17 @@ class OSAnalyzer:
         Returns (banner_text, style) describing overall system health for the top dashboard banner.
         Makes dashboard immediately intuitive and visible at a glance.
         """
+        # 1. Live countdown when launching demo workload
+        if getattr(self, "demo_launch_time", 0.0) > 0:
+            now = time.time()
+            if now < self.demo_launch_time:
+                remaining = int(math.ceil(self.demo_launch_time - now))
+                mode_str = getattr(self, "demo_mode", "attack").upper()
+                return (
+                    f"[SECURE] SYSTEM NORMAL | [DEMO {mode_str}] Launching workload in {remaining}s... (Inspect baseline state)",
+                    "bold bright_white on dark_green"
+                )
+
         if self.mitigation_logs:
             latest = self.mitigation_logs[-1]
             dec = latest.get("decision", "")
@@ -1195,18 +1235,25 @@ class OSAnalyzer:
                 j_stat = self.get_journal_status()
                 rec_cnt = j_stat.get("recovered", 0)
                 return (
-                    f"🛑 STAGE 2: THREAT MITIGATED (MOD 2, 7, 6) | Malicious Process Terminated (SIGKILL) | {rec_cnt} Files Restored via WAL Journal",
-                    "bold white on red"
+                    f"[STAGE 2: MITIGATED] (MOD 2, 7 & 6) | Malicious Process Terminated (SIGKILL) | {rec_cnt} Files Restored via WAL",
+                    "bold bright_white on dark_red"
                 )
             elif dec == "THROTTLE_PRIORITY":
+                fname = os.path.basename(list(self.throttled_files)[0]) if getattr(self, "throttled_files", None) else "file"
                 return (
-                    "⚠️  STAGE 1: SUSPICION (MODULE 3) | Rapid entropy write detected -> Demoted PID to IDLE Priority Class",
-                    "bold black on yellow"
+                    f"[STAGE 1: SUSPICION] (MODULE 3) | High entropy on {fname} -> Demoted PID to IDLE Priority Class",
+                    "bold bright_white on dark_orange"
                 )
 
+        if getattr(self, "demo_mode", None) == "normal" and self.target_workload_pid:
+            return (
+                "[BENIGN] NORMAL WORKLOAD | Benign App Active | Appending low-entropy text records | Intact",
+                "bold bright_white on dark_green"
+            )
+
         return (
-            "🟢 SYSTEM SECURE (NORMAL) | Filesystem Guard Active | All baseline files intact | Awaiting workload...",
-            "bold white on dark_green"
+            "[SECURE] SYSTEM NORMAL | Filesystem Guard Active | All baseline files intact | Awaiting workload...",
+            "bold bright_white on dark_green"
         )
 
 
