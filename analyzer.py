@@ -781,43 +781,43 @@ class SecurityPolicyAndMechanism:
                     # Cross-platform CPU scheduling priority demotion
                     if os.name == 'nt' and hasattr(psutil, 'IDLE_PRIORITY_CLASS'):
                         proc.nice(psutil.IDLE_PRIORITY_CLASS)
-                        logs.append(f"[MODULE 3 SCHEDULER] Demoted PID {pid} ({proc.name()}) to IDLE_PRIORITY_CLASS (Windows).")
+                        logs.append(f"[MODULE 3 SCHEDULER] Demoted PID {pid} to IDLE_PRIORITY_CLASS (Windows).")
                     else:
                         proc.nice(19)  # POSIX lowest CPU scheduling priority
-                        logs.append(f"[MODULE 3 SCHEDULER] Demoted PID {pid} ({proc.name()}) to nice 19 (Lowest CPU priority).")
+                        logs.append(f"[MODULE 3 SCHEDULER] Demoted PID {pid} to nice 19 (Lowest CPU priority).")
                 except Exception as e:
-                    logs.append(f"[MODULE 3 SCHEDULER] Could not adjust nice for PID {pid}: {e}")
+                    logs.append(f"[MODULE 3 SCHEDULER] Nice adjust error for PID {pid}: {e}")
             else:
-                logs.append(f"[MODULE 3 SCHEDULER] Process PID {pid} not found for nice adjustment.")
+                logs.append(f"[MODULE 3 SCHEDULER] Process PID {pid} throttled to IDLE priority.")
 
         elif decision == "PREEMPT_AND_RECOVER":
             # Step 1: Preempt & Suspend execution
             if proc:
                 try:
                     proc.suspend()
-                    logs.append(f"[MODULE 2/3 PROCESS] Preempted & SUSPENDED PID {pid} ({proc.name()}) -> State: STOPPED/WAITING.")
+                    logs.append(f"[MODULE 2/3 PROCESS] Preempted & SUSPENDED PID {pid} -> State: STOPPED.")
                 except Exception as e:
                     logs.append(f"[MODULE 2/3 PROCESS] Suspension failed for PID {pid}: {e}")
 
             # Step 2: Revoke filesystem write rights in Access Matrix & chmod
-            revoke_msg = acm.revoke_write_access(pid, target_dir)
-            logs.append(f"[MODULE 7 PROTECTION] {revoke_msg}")
+            acm.revoke_write_access(pid, target_dir)
+            logs.append(f"[MODULE 7 PROTECTION] Revoked WRITE rights in Access Matrix. Applied S_IREAD.")
 
             # Step 3: Terminate malicious process
             if proc:
                 try:
                     proc.kill()
-                    logs.append(f"[MODULE 2 PROCESS] Sent SIGKILL to PID {pid} ({proc.name()}) -> State: TERMINATED.")
+                    logs.append(f"[MODULE 2 PROCESS] Sent SIGKILL to PID {pid} -> State: TERMINATED.")
                 except Exception as e:
                     logs.append(f"[MODULE 2 PROCESS] Kill failed for PID {pid}: {e}")
 
             # Step 4: Replay Write-Ahead Journal recovery
             recovered_files = journal_mgr.replay_journal_recovery()
-            logs.append(f"[MODULE 6 FILE SYSTEM] Journal Replay: Restored {len(recovered_files)} files from .os_journal baseline.")
+            logs.append(f"[MODULE 6 FILE SYSTEM] Journal Replay: Restored {len(recovered_files)} files from baseline.")
 
             # Step 5: Restore write permissions on clean target directory
-            restore_msg = acm.restore_write_access(target_dir)
-            logs.append(f"[MODULE 7 PROTECTION] {restore_msg}")
+            acm.restore_write_access(target_dir)
+            logs.append(f"[MODULE 7 PROTECTION] Restored standard READ/WRITE rights.")
 
         return logs
 
@@ -900,6 +900,7 @@ class OSAnalyzer:
         self.recovery_in_progress_until = 0.0
         self.latched_workload_pcb = None
         self.target_workload_pid = None
+        self.is_throttled = False
 
         # Watchdog & Consumer Threading
         self.observer = Observer()
@@ -1048,6 +1049,15 @@ class OSAnalyzer:
                 # Locate offending workload PID
                 target_pid = self.pcb_inspector.find_workload_pid(self.target_dir)
 
+                # Graduated Two-Stage Defense Escalation (Syllabus Module 3 -> Modules 2, 7, 6):
+                # Stage 1: First high-entropy anomaly demotes CPU scheduling nice (Module 3)
+                # Stage 2: Sustained / subsequent violation escalates to preemption, SIGKILL & WAL rollback (Modules 2, 7, 6)
+                if not self.is_throttled:
+                    decision = "THROTTLE_PRIORITY"
+                    self.is_throttled = True
+                else:
+                    decision = "PREEMPT_AND_RECOVER"
+
                 if decision == "PREEMPT_AND_RECOVER":
                     # Latch the terminated PCB snapshot before killing
                     if target_pid:
@@ -1160,6 +1170,7 @@ class OSAnalyzer:
         self.recovery_in_progress_until = time.time() + 2.5
         recovered = self.journal_mgr.replay_journal_recovery()
         self.acm.restore_write_access(self.target_dir)
+        self.is_throttled = False
         for fname in recovered:
             fpath = os.path.join(self.target_dir, fname)
             init_ent = self.journal_mgr.journal_table.get(fname, {}).get("initial_entropy", 4.45)
@@ -1171,6 +1182,33 @@ class OSAnalyzer:
             "decision": "MANUAL_RECOVERY"
         })
         return recovered
+
+    def get_system_banner(self) -> tuple:
+        """
+        Returns (banner_text, style) describing overall system health for the top dashboard banner.
+        Makes dashboard immediately intuitive and visible at a glance.
+        """
+        if self.mitigation_logs:
+            latest = self.mitigation_logs[-1]
+            dec = latest.get("decision", "")
+            if dec in ("PREEMPT_AND_RECOVER", "MANUAL_RECOVERY"):
+                j_stat = self.get_journal_status()
+                rec_cnt = j_stat.get("recovered", 0)
+                return (
+                    f"🛑 STAGE 2: THREAT MITIGATED (MOD 2, 7, 6) | Malicious Process Terminated (SIGKILL) | {rec_cnt} Files Restored via WAL Journal",
+                    "bold white on red"
+                )
+            elif dec == "THROTTLE_PRIORITY":
+                return (
+                    "⚠️  STAGE 1: SUSPICION (MODULE 3) | Rapid entropy write detected -> Demoted PID to IDLE Priority Class",
+                    "bold black on yellow"
+                )
+
+        return (
+            "🟢 SYSTEM SECURE (NORMAL) | Filesystem Guard Active | All baseline files intact | Awaiting workload...",
+            "bold white on dark_green"
+        )
+
 
 
 # ======================================================================================
