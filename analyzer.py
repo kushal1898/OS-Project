@@ -346,6 +346,11 @@ class BoundedBufferEventQueue:
         # Telemetry metrics
         self.total_produced = 0
         self.total_consumed = 0
+        self.last_produced_event = None
+        self.last_consumed_event = None
+        self.last_produce_time = 0.0
+        self.last_consume_time = 0.0
+        self.peak_occupancy = 0
 
     def produce_event(self, event_data: dict, timeout: float = 1.0) -> bool:
         """
@@ -365,6 +370,10 @@ class BoundedBufferEventQueue:
         with self.mutex:
             self.buffer.append(event_data)
             self.total_produced += 1
+            self.last_produced_event = dict(event_data)
+            self.last_produce_time = time.time()
+            if len(self.buffer) > self.peak_occupancy:
+                self.peak_occupancy = len(self.buffer)
 
         # Step 3: Signal consumer that a new filled slot is ready
         self.filled_slots.release()
@@ -388,6 +397,8 @@ class BoundedBufferEventQueue:
         with self.mutex:
             item = self.buffer.popleft()
             self.total_consumed += 1
+            self.last_consumed_event = dict(item)
+            self.last_consume_time = time.time()
 
         # Step 3: Signal producer that an empty slot has freed up
         self.empty_slots.release()
@@ -403,6 +414,18 @@ class BoundedBufferEventQueue:
         # Safely extract internal semaphore counter values (standard CPython _value)
         empty_val = getattr(self.empty_slots, "_value", self.capacity - current_occupancy)
         full_val = getattr(self.filled_slots, "_value", current_occupancy)
+        now = time.time()
+
+        is_producing = (now - self.last_produce_time) < 1.2
+        is_consuming = (now - self.last_consume_time) < 1.2
+
+        last_ev = self.last_consumed_event or self.last_produced_event
+        if last_ev:
+            fname = os.path.basename(last_ev.get("filepath", "unknown"))
+            ev_type = last_ev.get("type", "EVENT")
+            last_event_str = f"{ev_type}: {fname}"
+        else:
+            last_event_str = "Awaiting FS Syscalls..."
 
         return {
             "buffer_occupancy": f"{current_occupancy}/{self.capacity}",
@@ -412,7 +435,11 @@ class BoundedBufferEventQueue:
             "full_semaphore_val": full_val,
             "mutex_locked": self.mutex.locked(),
             "total_produced": self.total_produced,
-            "total_consumed": self.total_consumed
+            "total_consumed": self.total_consumed,
+            "peak_occupancy": self.peak_occupancy,
+            "is_producing": is_producing,
+            "is_consuming": is_consuming,
+            "last_event_str": last_event_str
         }
 
 
@@ -596,28 +623,33 @@ class AccessControlMatrix:
 
     def __init__(self, target_dir: str):
         self.target_dir = os.path.abspath(target_dir)
-        self.matrix = {
-            "User_Admin": {
-                "test_monitor_dir/*": "READ | WRITE | EXECUTE",
-                ".os_journal/*": "READ | WRITE | ADMIN"
-            },
-            "OS_Analyzer_Monitor": {
-                "test_monitor_dir/*": "READ | WRITE | AUDIT",
-                ".os_journal/*": "READ | WRITE | ADMIN"
-            },
-            "Workload_Process": {
-                "test_monitor_dir/*": "READ | WRITE",
-                ".os_journal/*": "NO_ACCESS"
-            }
-        }
+        self.workload_name = "mock_encryptor.py"
+        self.workload_pid = None
+        self.workload_state = "NORMAL"  # NORMAL, FLAGGED, REVOKED, TERMINATED
         self.revoked_pids = set()
+
+    def set_workload_info(self, pid: int, name: str = "mock_encryptor.py"):
+        """Registers the active workload process in the protection domain."""
+        if pid:
+            self.workload_pid = pid
+        if name:
+            self.workload_name = name
+
+    def flag_suspicious_access(self, pid: int):
+        """Transitions workload domain to FLAGGED during Stage 1 priority demotion."""
+        if pid:
+            self.workload_pid = pid
+        self.workload_state = "FLAGGED"
 
     def revoke_write_access(self, pid: int, directory: str = None) -> str:
         """
-        Revokes WRITE rights for Workload_Process and applies read-only chmod at OS level.
+        Revokes WRITE rights for workload process and applies read-only chmod at OS level.
+        Transitions domain rights to REVOKED.
         """
         dir_to_lock = directory or self.target_dir
-        self.matrix["Workload_Process"]["test_monitor_dir/*"] = "READ_ONLY (WRITE REVOKED)"
+        if pid:
+            self.workload_pid = pid
+        self.workload_state = "REVOKED"
         self.revoked_pids.add(pid)
 
         locked_count = 0
@@ -633,16 +665,20 @@ class AccessControlMatrix:
                 except Exception:
                     pass
 
-        return f"Revoked WRITE rights in Access Matrix. Applied S_IREAD lock to {locked_count} files."
+        return f"Revoked WRITE rights in Access Matrix for PID {pid}. Applied S_IREAD lock to {locked_count} files."
+
+    def terminate_workload_access(self, pid: int):
+        """Permanently seals workload rights after SIGKILL termination."""
+        if pid:
+            self.workload_pid = pid
+        self.workload_state = "TERMINATED"
 
     def restore_write_access(self, directory: str = None) -> str:
         """
-        Restores normal READ | WRITE permissions in the Access Matrix and filesystem.
+        Restores normal READ | WRITE permissions in filesystem for legitimate users (User_Admin).
+        The malicious process domain (mock_encryptor.py) permanently remains REVOKED/TERMINATED.
         """
         dir_to_unlock = directory or self.target_dir
-        self.matrix["Workload_Process"]["test_monitor_dir/*"] = "READ | WRITE"
-        self.revoked_pids.clear()
-
         restored_count = 0
         for entry in os.listdir(dir_to_unlock):
             if entry == ".os_journal":
@@ -650,19 +686,50 @@ class AccessControlMatrix:
             fpath = os.path.join(dir_to_unlock, entry)
             if os.path.isfile(fpath):
                 try:
-                    # Restore standard read/write permissions
+                    # Restore standard read/write permissions for legitimate users
                     os.chmod(fpath, stat.S_IREAD | stat.S_IWRITE | stat.S_IWUSR | stat.S_IRUSR)
                     restored_count += 1
                 except Exception:
                     pass
 
-        return f"Restored READ|WRITE rights in Access Matrix for {restored_count} files."
+        return f"Restored standard READ|WRITE rights for User_Admin on {restored_count} baseline files."
 
     def get_matrix_table(self) -> dict:
         """
-        Returns snapshot of current Access Control Matrix rights.
+        Returns dynamic snapshot of Access Control Matrix rights showing mock_encryptor.py.
         """
-        return dict(self.matrix)
+        if self.workload_pid:
+            if self.workload_state == "TERMINATED":
+                subj_name = f"mock_encryptor.py ({self.workload_pid}) [DEAD]"
+            else:
+                subj_name = f"mock_encryptor.py ({self.workload_pid})"
+        else:
+            subj_name = "mock_encryptor.py (Workload)"
+
+        # Rights for mock_encryptor domain
+        if self.workload_state == "TERMINATED":
+            w_rights = "REVOKED / NO_ACCESS"
+        elif self.workload_state == "REVOKED":
+            w_rights = "READ_ONLY (WRITE REVOKED)"
+        elif self.workload_state == "FLAGGED":
+            w_rights = "READ | WRITE (FLAGGED)"
+        else:
+            w_rights = "READ | WRITE"
+
+        return {
+            "User_Admin": {
+                "test_monitor_dir/*": "READ | WRITE | EXECUTE",
+                ".os_journal/*": "READ | WRITE | ADMIN"
+            },
+            "OS_Analyzer_Monitor": {
+                "test_monitor_dir/*": "READ | WRITE | AUDIT",
+                ".os_journal/*": "READ | WRITE | ADMIN"
+            },
+            subj_name: {
+                "test_monitor_dir/*": w_rights,
+                ".os_journal/*": "NO_ACCESS"
+            }
+        }
 
 
 # ======================================================================================
@@ -786,6 +853,8 @@ class SecurityPolicyAndMechanism:
             proc = None
 
         if decision == "THROTTLE_PRIORITY":
+            if pid:
+                acm.flag_suspicious_access(pid)
             if proc:
                 try:
                     # Cross-platform CPU scheduling priority demotion
@@ -811,7 +880,7 @@ class SecurityPolicyAndMechanism:
 
             # Step 2: Revoke filesystem write rights in Access Matrix & chmod
             acm.revoke_write_access(pid, target_dir)
-            logs.append(f"[MODULE 7 PROTECTION] Revoked WRITE rights in Access Matrix. Applied S_IREAD.")
+            logs.append(f"[MODULE 7 PROTECTION] Revoked WRITE rights in Access Matrix for PID {pid}. Applied S_IREAD.")
 
             # Step 3: Terminate malicious process
             if proc:
@@ -820,14 +889,16 @@ class SecurityPolicyAndMechanism:
                     logs.append(f"[MODULE 2 PROCESS] Sent SIGKILL to PID {pid} -> State: TERMINATED.")
                 except Exception as e:
                     logs.append(f"[MODULE 2 PROCESS] Kill failed for PID {pid}: {e}")
+            if pid:
+                acm.terminate_workload_access(pid)
 
             # Step 4: Replay Write-Ahead Journal recovery
             recovered_files = journal_mgr.replay_journal_recovery()
             logs.append(f"[MODULE 6 FILE SYSTEM] Journal Replay: Restored {len(recovered_files)} files from baseline.")
 
-            # Step 5: Restore write permissions on clean target directory
+            # Step 5: Restore write permissions on clean target directory for legitimate users
             acm.restore_write_access(target_dir)
-            logs.append(f"[MODULE 7 PROTECTION] Restored standard READ/WRITE rights.")
+            logs.append(f"[MODULE 7 PROTECTION] Restored baseline file access for User_Admin.")
 
         return logs
 
@@ -929,6 +1000,8 @@ class OSAnalyzer:
         """
         if not pid:
             return
+        self.acm.set_workload_info(pid, "mock_encryptor.py")
+        self.acm.terminate_workload_access(pid)
         try:
             snap = self.pcb_inspector.inspect_process(pid)
         except Exception:
@@ -1168,6 +1241,7 @@ class OSAnalyzer:
                 self.target_workload_pid = pid
 
         if pid and HAS_PSUTIL and psutil.pid_exists(pid):
+            self.acm.set_workload_info(pid, "mock_encryptor.py")
             pcb = self.pcb_inspector.inspect_process(pid)
             if "TERMINATED" not in pcb.get("os_state", ""):
                 if "python" in pcb.get("process_name", "").lower():
@@ -1308,6 +1382,11 @@ if __name__ == "__main__":
     
     # Create test dummy file
     test_file = os.path.join(test_dir, "selftest_doc.txt")
+    if os.path.exists(test_file):
+        try:
+            os.chmod(test_file, stat.S_IREAD | stat.S_IWRITE | stat.S_IWUSR)
+        except Exception:
+            pass
     with open(test_file, "w", encoding="utf-8") as f:
         f.write("Operating Systems Journal Checkpoint Baseline Test.")
     
@@ -1319,7 +1398,8 @@ if __name__ == "__main__":
     revoke_log = acm.revoke_write_access(os.getpid(), test_dir)
     print(f"    - Access Matrix Revocation   : {revoke_log}")
     matrix = acm.get_matrix_table()
-    print(f"    - Workload Rights            : {matrix['Workload_Process']['test_monitor_dir/*']}")
+    w_key = [k for k in matrix.keys() if k not in ("User_Admin", "OS_Analyzer_Monitor")][0]
+    print(f"    - Workload ({w_key}) Rights : {matrix[w_key]['test_monitor_dir/*']}")
 
     # Mark test file dirty and replay recovery
     journal_mgr.mark_dirty(test_file)
