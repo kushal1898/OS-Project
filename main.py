@@ -95,13 +95,12 @@ def build_sync_panel(analyzer: OSAnalyzer) -> Panel:
     """
     Renders Module 4 (Threads & Concurrency / Process Synchronization).
     Displays the Bounded-Buffer state, Semaphore counters, and Mutex lock.
-    All columns have strict no_wrap and ellipsis overflow to prevent layout bouncing.
+    Streamlined 2-column layout prevents crowding on smaller terminal windows.
     """
     sync = analyzer.get_sync_telemetry()
     table = Table(box=box.SIMPLE_HEAD, expand=True, show_header=True)
-    table.add_column("Synchronization Primitive", style="green", width=24, no_wrap=True, overflow="ellipsis")
-    table.add_column("Value / State", style="white", width=20, no_wrap=True, overflow="ellipsis")
-    table.add_column("Syllabus Role", style="dim white", no_wrap=True, overflow="ellipsis")
+    table.add_column("Synchronization Primitive (IPC)", style="green", ratio=3, no_wrap=True, overflow="ellipsis")
+    table.add_column("State / Telemetry", style="white", ratio=2, no_wrap=True, overflow="ellipsis")
 
     # Mutex lock state styling
     if sync.get("mutex_locked", False):
@@ -113,13 +112,13 @@ def build_sync_panel(analyzer: OSAnalyzer) -> Panel:
     occ = sync.get("buffer_occupancy", "0/20")
     occ_styled = f"[bold yellow]{occ}[/bold yellow]"
 
-    table.add_row("Producer Thread", "Watchdog Listener", "Produces events on file write")
-    table.add_row("Consumer Thread", "OSAnalyzer Engine", "Consumes events & enforces policy")
-    table.add_row("Bounded Buffer Queue", occ_styled, "Fixed capacity N=20 slots")
-    table.add_row("empty_slots (Semaphore)", f"[cyan]{sync.get('empty_semaphore_val', 20)}[/cyan]", "Counts vacant buffer slots")
-    table.add_row("filled_slots (Semaphore)", f"[magenta]{sync.get('full_semaphore_val', 0)}[/magenta]", "Counts queued items")
-    table.add_row("mutex (Lock)", mutex_styled, "Enforces Critical Section Mutex")
-    table.add_row("IPC Events Processed", f"Prod: {sync.get('total_produced', 0)} | Cons: {sync.get('total_consumed', 0)}", "Total synchronized queue operations")
+    table.add_row("Producer Thread (Watchdog)", "[cyan]LISTENING[/cyan]")
+    table.add_row("Consumer Thread (OS Engine)", "[cyan]ACTIVE[/cyan]")
+    table.add_row("Bounded Buffer Queue", f"{occ_styled} (Capacity N=20)")
+    table.add_row("empty_slots (Semaphore)", f"[cyan]{sync.get('empty_semaphore_val', 20)} vacant[/cyan]")
+    table.add_row("filled_slots (Semaphore)", f"[magenta]{sync.get('full_semaphore_val', 0)} queued[/magenta]")
+    table.add_row("mutex (Critical Section Lock)", mutex_styled)
+    table.add_row("IPC Events Synchronized", f"Prod: {sync.get('total_produced', 0)} | Cons: {sync.get('total_consumed', 0)}")
 
     return Panel(
         table,
@@ -213,8 +212,8 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
     Displays the Access Matrix rights and strictly capped latest 5 chronological OS action logs.
     All table cells use no_wrap=True and overflow="ellipsis" for rock-solid stability.
     """
-    # 1. Access Control Matrix Sub-Table
-    acm_table = Table(box=box.SIMPLE_HEAD, expand=True, show_header=True)
+    # 1. Access Control Matrix Sub-Table (compact 3 rows)
+    acm_table = Table(box=box.SIMPLE, expand=True, show_header=True, padding=(0, 1))
     acm_table.add_column("Domain / Subject", style="cyan", width=20, no_wrap=True, overflow="ellipsis")
     acm_table.add_column("test_monitor_dir/*", style="white", no_wrap=True, overflow="ellipsis")
     acm_table.add_column(".os_journal/*", style="white", no_wrap=True, overflow="ellipsis")
@@ -232,12 +231,12 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
         jour_styled = f"[dim]{jour_rights}[/dim]" if "NO_ACCESS" in jour_rights else f"[cyan]{jour_rights}[/cyan]"
         acm_table.add_row(subject, dir_styled, jour_styled)
 
-    # 2. Chronological OS Mechanism Action Log (Strictly latest 5 events)
-    log_table = Table(box=box.SIMPLE, expand=True, show_header=True)
-    log_table.add_column("Time", style="dim cyan", width=10, no_wrap=True, overflow="ellipsis")
+    # 2. Chronological OS Mechanism Action Log (Strictly latest 6 events)
+    log_table = Table(box=box.SIMPLE, expand=True, show_header=True, padding=(0, 1))
+    log_table.add_column("Time", style="dim cyan", width=8, no_wrap=True)
     log_table.add_column("OS Mechanism Enforced", style="white", no_wrap=True, overflow="ellipsis")
 
-    recent_logs = list(analyzer.mitigation_logs)[-5:]
+    recent_logs = list(analyzer.mitigation_logs)[-6:]
     if not recent_logs:
         log_table.add_row(
             time.strftime('%H:%M:%S'),
@@ -259,10 +258,10 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
                 styled_msg = msg
             log_table.add_row(t_str, styled_msg)
 
-    # Combine into a single vertical layout with fixed sub-panel sizes
+    # Combine into a single vertical layout with compact ACM and expanded log space
     combined_layout = Layout()
     combined_layout.split_column(
-        Layout(acm_table, size=6),
+        Layout(acm_table, size=5),
         Layout(log_table)
     )
 
@@ -280,27 +279,35 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
 def generate_layout(analyzer: OSAnalyzer, target_dir: str) -> Layout:
     """
     Composes the 4-panel syllabus layout with locked sizes and equal ratios.
-    Prevents vertical stretching, wrapping, or terminal bouncing.
+    Includes a high-visibility dynamic System Status Banner across the top.
     """
     cpu_pct, mem_pct = analyzer.get_system_stats()
+    banner_text, banner_style = analyzer.get_system_banner()
 
     root = Layout()
     root.split_column(
-        Layout(name="header", size=3),
+        Layout(name="header", size=4),
         Layout(name="upper", ratio=1),
         Layout(name="lower", ratio=1),
         Layout(name="footer", size=3)
     )
 
-    # Header Bar
-    header_text = Text.assemble(
-        ("  OS-ANALYZER: REAL-TIME RESOURCE UTILIZATION & ENCRYPTION ANALYZER ", "bold white on blue"),
-        (" | Syllabus: BCSE303L (Modules 2 - 7) ", "bold white on dark_blue"),
+    # Header Bar with Integrated System Status Banner
+    header_table = Table.grid(expand=True)
+    header_table.add_column(ratio=1)
+
+    line1 = Text.assemble(
+        ("  OS-ANALYZER: REAL-TIME RESOURCE UTILIZATION & ENCRYPTION ANALYZER ", "bold white"),
+        (" | Syllabus: BCSE303L (Modules 2 - 7) ", "dim white"),
         (f" | CPU: {cpu_pct:.1f}% ", "bold cyan"),
         (f" | RAM: {mem_pct:.1f}% ", "bold magenta"),
         (f" | Target: {os.path.basename(target_dir)} ", "yellow")
     )
-    root["header"].update(Panel(header_text, style="white on dark_blue", box=box.SQUARE))
+    line2 = Text(f" {banner_text} ", style=banner_style)
+
+    header_table.add_row(line1)
+    header_table.add_row(line2)
+    root["header"].update(Panel(header_table, style="white on dark_blue", box=box.SQUARE))
 
     # Upper & Lower Row Splitting
     root["upper"].split_row(
@@ -337,15 +344,15 @@ def generate_layout(analyzer: OSAnalyzer, target_dir: str) -> Layout:
 def launch_demo_workload(mode: str, target_dir: str):
     """
     Launches mock_encryptor.py in a background process after a brief 2-second pause.
-    STDOUT and STDERR are redirected to DEVNULL so child process output never
-    leaks to the terminal or corrupts the Rich alternate screen buffer.
+    Paced with 1.2s delay per file so students and evaluators can clearly observe
+    Stage 1 (Module 3 Throttle) -> Stage 2 (Module 2/7/6 SIGKILL & WAL Rollback).
     """
     time.sleep(2.0)
     cmd = [
         sys.executable,
         os.path.join(os.path.dirname(__file__), "mock_encryptor.py"),
         "--mode", mode,
-        "--delay", "0.25",
+        "--delay", "1.2",
         "--dir", target_dir
     ]
     subprocess.Popen(

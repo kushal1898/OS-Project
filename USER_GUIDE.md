@@ -135,25 +135,29 @@ We provide multiple execution modes tailored for live demonstrations and testing
 
 ### Method 1: Single-Command Automated Attack Demo (Best for Viva)
 
-This is the recommended command for your viva evaluation. It resets all 25 test files to clean plaintext, launches the 4-panel dashboard on the terminal's alternate screen buffer, and automatically fires the mock encryptor in the background after 2 seconds:
+This is the recommended command for your viva evaluation. It resets all 25 test files to clean plaintext, launches the 4-panel dashboard with the dynamic Status Banner on the terminal's alternate screen buffer, and automatically fires the mock encryptor in the background after 2 seconds:
 
 ```bash
 python main.py --demo attack
 ```
 
-**What you will see live on screen:**
-1. **At $T = 0s$:** Dashboard opens. All 25 inodes show status `COMMITTED`, Working Set RSS is idle, and the Access Control Matrix shows standard `READ | WRITE` rights.
-2. **At $T = 2s$:** The background attack workload begins.
+**What you will see live on screen (Graduated Two-Stage Defense):**
+1. **At $T = 0s$ (Clean Baseline):** Dashboard opens. Top banner is **GREEN** (`🟢 SYSTEM SECURE (NORMAL)`). All 25 inodes show status `COMMITTED`, Working Set RSS is idle, and the Access Control Matrix shows standard `READ | WRITE` rights.
+2. **At $T = 2.0s$:** The background attack workload begins (`mock_encryptor.py`).
    - Workload PID registers in **Panel 1** (State: `READY/RUNNING`).
    - Events enter **Panel 2** (Bounded Buffer occupancy increments, semaphore counters tick).
-   - In **Panel 3**, files change status to `DIRTY / UNCOMMITTED` as Shannon Entropy jumps from $4.45 \to 7.95$ bits/byte (highlighted in red).
-3. **At $T = 3s$:** Policy Threat Score hits `100/100`:
-   - **Module 3:** Scheduling priority demoted to `IDLE_PRIORITY_CLASS` (throttled).
-   - **Module 2:** Process is preempted and suspended (`WAITING/STOPPED`).
-   - **Module 7:** Access Matrix revokes write access (`READ_ONLY`), applying OS `chmod` locks.
-   - **Module 2:** Kernel delivers `SIGKILL`, terminating the rogue process (`TERMINATED`).
-   - **Module 6:** Journal Recovery Replay restores all corrupted files from `.os_journal/` baseline (`RECOVERED`).
-4. **Final State:** Attacker PID remains pinned in Panel 1 as `TERMINATED`, all 25 files are restored to clean plaintext, and the journal summary displays: `Committed: 21 | Dirty: 0 | Recovered: 4`.
+3. **At $T = 3.2s$ (Stage 1 Warning — Module 3):** File 1 (`database_01.csv`) is encrypted:
+   - Shannon Entropy jumps from $4.45 \to 8.00$ bits/byte (marked `DIRTY`).
+   - Top banner turns **YELLOW** (`⚠️ STAGE 1: SUSPICION (MODULE 3)`).
+   - **Module 3 Scheduler:** Offending PID is demoted to `IDLE_PRIORITY_CLASS` (nice 64/19).
+4. **At $T = 4.4s$ (Stage 2 Hard Defense — Modules 2, 7 & 6):** File 2 is touched (repeated violation):
+   - Policy flags confirmed attack and executes the full mitigation pipeline:
+     - **Module 2:** Process is preempted and suspended (`STOPPED`).
+     - **Module 7:** Access Matrix revokes write access (`READ_ONLY`), applying OS `chmod` locks.
+     - **Module 2:** Kernel delivers `SIGKILL`, terminating the rogue process (`TERMINATED`).
+     - **Module 6:** Write-Ahead Journal Replay restores all corrupted files from `.os_journal/` baseline (`RECOVERED`).
+   - Top banner turns **RED** (`🛑 STAGE 2: THREAT MITIGATED (MOD 2, 7, 6)`).
+5. **Final State:** Attacker PID remains pinned in Panel 1 as `TERMINATED`, both compromised files are restored to clean plaintext, and the journal summary displays: `Committed: 23 | Dirty: 0 | Recovered: 2`.
 
 Press `Ctrl + C` at any time to exit the dashboard.
 
@@ -167,13 +171,16 @@ Demonstrates that normal user programs (low-entropy log appends, $H \approx 4.4$
 python main.py --demo normal
 ```
 
-**Observation:** All 25 files are processed normally, threat score remains `0`, and no OS defenses are triggered.
+**Observation:** All 25 files are processed normally, top banner stays **GREEN**, threat score remains `0`, and no OS defenses are triggered.
 
 ---
 
 ### Method 3: Two-Terminal Manual Walkthrough
 
-If you prefer to control the attack pacing or trigger encryption manually from a second window:
+If you want to manually trigger the attack or adjust pacing while keeping the dashboard open in a separate window:
+
+> [!IMPORTANT]
+> **Order of Execution:** You must keep **Terminal 1** (`main.py`) running *before* executing commands in **Terminal 2**. If you run `mock_encryptor.py` by itself without the analyzer running, there is no defender active to intercept the attack!
 
 #### Terminal 1 — Start the Monitor
 ```bash
@@ -182,14 +189,14 @@ python main.py
 
 #### Terminal 2 — Control the Workload
 ```bash
-# Reset files to clean state
+# 1. Reset files to clean baseline
 python mock_encryptor.py --reset
 
-# Run normal benign writes
-python mock_encryptor.py --mode normal
+# 2. Run normal benign writes
+python mock_encryptor.py --mode normal --delay 1.0
 
-# Run encryption attack with custom pacing (e.g., 0.3s per file)
-python mock_encryptor.py --mode attack --delay 0.3
+# 3. Run encryption attack with custom pacing (e.g. 2.0s per file)
+python mock_encryptor.py --mode attack --delay 2.0
 ```
 
 ---
@@ -351,6 +358,8 @@ When demonstrating the project to an examiner, use this concise script:
 
 | Issue | Cause | Solution |
 | :--- | :--- | :--- |
+| **Attacker encrypted all 25 files without stopping** | You ran `mock_encryptor.py` by itself without `main.py` running in another terminal. | The encryptor is only the attacker. To see defenses trigger, either use `python main.py --demo attack` (all-in-one) or start `python main.py` in Terminal 1 first before running the attack in Terminal 2. |
+| **Dashboard text feels too large or cluttered** | Default terminal font size is large for multi-panel TUI. | Hold **`Ctrl`** and scroll your **Mouse Wheel Down** (or press **`Ctrl` + `-`**) inside the terminal window to zoom out and make the text smaller and crisp. |
 | **Terminal screen feels cramped** | Terminal window size is too small for a 2x2 grid. | Maximize your terminal window or set dimensions to at least **110 columns $\times$ 32 rows**. |
 | **`psutil.AccessDenied` warning** | Inspecting system-level protected PIDs without admin rights. | Normal behavior on Windows/Linux; OS-Analyzer safely handles this with `try/except` and focuses on the active user workload. |
 | **Files remain in encrypted state** | Process was killed prematurely before recovery finished. | Run `python mock_encryptor.py --reset` to instantly restore 25 clean baseline files. |

@@ -36,9 +36,25 @@ pip install -r requirements.txt
 
 ---
 
-### 2. Method A: Single-Command Automated Live Demo (Recommended for Viva)
+### 2. Complete Command Cheat Sheet
 
-Run the automated demo in a single terminal. It automatically resets `test_monitor_dir/` with 25 clean plaintext files, launches the 4-panel dashboard, and initiates the encryption workload after 2 seconds:
+| Mode | Command Line | Description |
+| :--- | :--- | :--- |
+| **Option 1A (Live Attack Demo)** | `python main.py --demo attack` | **Recommended for Viva!** Single-command automated attack & defense demo. Paced at 1.2s per file. |
+| **Option 1B (Benign Workload)** | `python main.py --demo normal` | Proves normal text writes run unhindered (0 alerts, threat score = 0). |
+| **Option 2 (Manual Two-Terminal)** | *Terminal 1:* `python main.py`<br>*Terminal 2:* `python mock_encryptor.py --mode attack --delay 2.0` | Interactive mode: watch the monitor in Terminal 1 while triggering the attack in Terminal 2. |
+| **Option 3A (Clean Environment)** | `python mock_encryptor.py --reset` | Restores `test_monitor_dir/` to 25 pristine plaintext files and clears locks. |
+| **Option 3B (Module Self-Test)** | `python analyzer.py` | Direct terminal unit test validating all 6 syllabus modules. |
+
+> [!TIP]
+> **Terminal Font Size / Zoom:** If the dashboard feels large or crowded on your screen, hold **`Ctrl`** and scroll your **Mouse Wheel Down** (or press **`Ctrl` + `-`** in Windows Terminal) to zoom out and make the display sharp and compact.
+
+---
+
+### 3. Execution Methods in Detail
+
+#### Method A: Single-Command Automated Live Demo (Recommended for Viva)
+Run the automated demo in a single terminal. It automatically resets `test_monitor_dir/` with 25 clean plaintext files, launches the dashboard, and initiates the workload at a human-observable pace (1.2s per file):
 
 ```bash
 # Automated Ransomware Attack & OS Defense Demo:
@@ -48,65 +64,55 @@ python main.py --demo attack
 python main.py --demo normal
 ```
 
----
+**What happens live on screen (Two-Stage Defense):**
+1. **At T=0s**: Clean baseline. Top banner is **GREEN** (`SYSTEM SECURE`).
+2. **At T=3.2s (Stage 1 Warning — Module 3)**: File 1 entropy spikes $\to$ Top banner turns **YELLOW**, and the scheduler demotes the process CPU priority to `IDLE` (nice 64/19).
+3. **At T=4.4s (Stage 2 Hard Defense — Modules 2, 7 & 6)**: File 2 is touched $\to$ Top banner turns **RED**, process is preempted, write rights are revoked via `chmod`, process is terminated via `SIGKILL`, and both files are restored from the Write-Ahead Journal!
 
-### 3. Method B: Two-Terminal Interactive Walkthrough
-
+#### Method B: Two-Terminal Interactive Walkthrough
 For a step-by-step presentation where you control the attack from a separate window:
 
-#### Terminal 1 — Start the OS Analyzer Dashboard
+*Note: You must start Terminal 1 first so the defender is active!*
+
 ```bash
+# Terminal 1 — Start the OS Analyzer Dashboard:
 python main.py
-```
 
-#### Terminal 2 — Trigger the Workload Simulator
-```bash
-# Reset baseline files (~40 KB each, Shannon Entropy ≈ 4.45 bits/byte)
+# Terminal 2 — Trigger the Workload Simulator:
 python mock_encryptor.py --reset
-
-# Run normal benign user workload (appends logs, 0 alerts triggered)
-python mock_encryptor.py --mode normal
-
-# Run encryption attack workload (triggers priority throttle, suspension, kill, and journal rollback!)
-python mock_encryptor.py --mode attack --delay 0.25
+python mock_encryptor.py --mode normal --delay 1.0
+python mock_encryptor.py --mode attack --delay 2.0
 ```
 
 ---
 
-### 4. Standalone Engine Self-Test
-To verify all 6 syllabus modules directly via terminal unit tests:
-```bash
-python analyzer.py
-```
+## 🖥️ Terminal Dashboard: Layout Architecture
 
----
-
-## 🖥️ Terminal Dashboard: The 4 Syllabus Panels
-
-When running [`main.py`](file:///main.py), the terminal splits into a live 2x2 grid where every panel corresponds to a specific course module:
+When running [`main.py`](file:///main.py), the terminal displays a live dynamic status banner and a 2x2 syllabus grid:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│  🛡️  OS-ANALYZER: REAL-TIME RESOURCE UTILIZATION & ENCRYPTION ANALYZER | BCSE303L (Modules 2 - 7)       │
+│  OS-ANALYZER: REAL-TIME RESOURCE UTILIZATION & ENCRYPTION ANALYZER | CPU: 8.4% | RAM: 32.1%             │
+│  🛑 STAGE 2: THREAT MITIGATED (MOD 2, 7, 6) | Process Terminated (SIGKILL) | 2 Files Restored from WAL   │
 ├──────────────────────────────────────────────────┬─────────────────────────────────────────────────────┤
 │ [MODULE 2 & 5] PCB & Working Set Virtual Memory  │ [MODULE 4] Producer-Consumer IPC & Semaphores       │
-│ • Target PID / PPID: 14208 / 8192                │ • Producer: Watchdog (FileSystemListener)           │
-│ • Process Name: python.exe                       │ • Consumer: OSAnalyzer Engine                       │
-│ • Textbook State: WAITING/STOPPED -> TERMINATED  │ • Bounded Buffer Queue: 2/20 slots                  │
-│ • Scheduling Priority: nice=64 (THROTTLED/IDLE)  │ • empty_slots (Semaphore): 18 (Vacant)              │
-│ • Working Set RSS: 28.45 MB                      │ • filled_slots (Semaphore): 2 (Occupied)            │
-│ • Page Faults: 3,412                             │ • mutex (Lock): UNLOCKED [OK]                       │
-│ • I/O Syscalls: Read: 120 | Write: 84            │ • IPC Throughput: Prod: 42 | Cons: 42               │
+│ • Target PID / PPID: 14208 / 8192                │ • Producer Thread (Watchdog): LISTENING             │
+│ • Process Name: python.exe (mock_encryptor.py)   │ • Consumer Thread (OS Engine): ACTIVE               │
+│ • Textbook State: TERMINATED (SIGKILL)           │ • Bounded Buffer Queue: 0/20 slots (Capacity N=20)  │
+│ • Scheduling Priority: 64 (THROTTLED/IDLE)       │ • empty_slots (Semaphore): 20 vacant                │
+│ • Working Set RSS: 28.45 MB                      │ • filled_slots (Semaphore): 0 queued                │
+│ • Page Faults: 3,412                             │ • mutex (Critical Section Lock): UNLOCKED [OK]      │
+│ • I/O Syscalls: Read: 120 | Write: 84            │ • IPC Events Synchronized: Prod: 42 | Cons: 42      │
 ├──────────────────────────────────────────────────┼─────────────────────────────────────────────────────┤
 │ [MODULE 6] File System Table & Journal (WAL)     │ [MODULE 7 & 3] Access Control Matrix & Mitigation   │
-│ • report_01.txt | Inode: 844421 | 4.45 -> 7.95   │ • Domain: Workload_Process                          │
-│   Rate: 145.2 KB/s | Status: DIRTY / UNCOMMITTED │   Rights on test_monitor_dir: READ_ONLY (REVOKED)   │
-│ • database_02.csv | Inode: 844422 | 4.45 -> 4.45 │ • OS Action Log:                                    │
-│   Rate: 0.0 KB/s   | Status: RECOVERED           │   [MOD 3] Demoted PID 14208 CPU priority to IDLE    │
+│ • database_01.csv | Inode: 844421 | 4.45 -> 8.00 │ • Domain Rights:                                    │
+│   Rate: 42.1 KB/s  | Status: RECOVERED           │   User_Admin: RWX | OS_Monitor: RWA | Workload: RW  │
+│ • database_02.csv | Inode: 844422 | 4.45 -> 8.00 │ • OS Chronological Action Log:                      │
+│   Rate: 38.6 KB/s  | Status: RECOVERED           │   [MOD 3] Demoted PID 14208 CPU priority to IDLE    │
 │                                                  │   [MOD 2] Preempted & SUSPENDED PID 14208 (STOPPED) │
-│ Summary: Inodes: 25 | Committed: 21 | Recovered: 4 │   [MOD 7] Revoked WRITE rights; applied S_IREAD     │
+│ Summary: Inodes: 25 | Committed: 23 | Recovered: 2 │   [MOD 7] Revoked WRITE rights; applied S_IREAD     │
 │                                                  │   [MOD 2] Sent SIGKILL to PID 14208 (TERMINATED)    │
-│                                                  │   [MOD 6] Replayed Journal: Restored 4 files        │
+│                                                  │   [MOD 6] Journal Replay: Restored 2 files          │
 └──────────────────────────────────────────────────┴─────────────────────────────────────────────────────┘
 ```
 
