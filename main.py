@@ -31,9 +31,24 @@ from rich.live import Live
 from rich.table import Table
 from rich.layout import Layout
 from rich.panel import Panel
-from rich.console import Console
+from rich.console import Console, Group
 from rich.text import Text
 from rich import box
+
+def enable_windows_vt():
+    """Enables Windows 10 Virtual Terminal (ANSI) sequence processing to eliminate line-wipe flicker."""
+    if os.name == 'nt':
+        try:
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            hOut = kernel32.GetStdHandle(-11)  # STD_OUTPUT_HANDLE
+            if hOut and hOut != -1:
+                mode = ctypes.c_ulong()
+                if kernel32.GetConsoleMode(hOut, ctypes.byref(mode)):
+                    # ENABLE_VIRTUAL_TERMINAL_PROCESSING (0x0004) | DISABLE_NEWLINE_AUTO_RETURN (0x0008)
+                    kernel32.SetConsoleMode(hOut, mode.value | 0x0004 | 0x0008)
+        except Exception:
+            pass
 
 from analyzer import OSAnalyzer, calculate_entropy
 
@@ -258,15 +273,8 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
                 styled_msg = msg
             log_table.add_row(t_str, styled_msg)
 
-    # Combine into a single vertical layout with compact ACM and expanded log space
-    combined_layout = Layout()
-    combined_layout.split_column(
-        Layout(acm_table, size=5),
-        Layout(log_table)
-    )
-
     return Panel(
-        combined_layout,
+        Group(acm_table, log_table),
         title="[bold red][MODULE 7 & 3] Access Control Matrix & OS Mitigation Engine[/bold red]",
         border_style="red"
     )
@@ -341,13 +349,13 @@ def generate_layout(analyzer: OSAnalyzer, target_dir: str) -> Layout:
 # DEMO LAUNCHER HELPER (SILENCED SUBPROCESS)
 # ======================================================================================
 
-def launch_demo_workload(mode: str, target_dir: str):
+def launch_demo_workload(mode: str, target_dir: str, start_delay: float = 3.5):
     """
-    Launches mock_encryptor.py in a background process after a brief 2-second pause.
+    Launches mock_encryptor.py in a background process after a brief countdown.
     Paced with 1.2s delay per file so students and evaluators can clearly observe
     Stage 1 (Module 3 Throttle) -> Stage 2 (Module 2/7/6 SIGKILL & WAL Rollback).
     """
-    time.sleep(2.0)
+    time.sleep(start_delay)
     cmd = [
         sys.executable,
         os.path.join(os.path.dirname(__file__), "mock_encryptor.py"),
@@ -379,14 +387,16 @@ def main():
         help="Monitored target directory (default: test_monitor_dir)"
     )
     parser.add_argument(
-        "--refresh", type=float, default=4.0,
-        help="Dashboard refresh rate in Hz (default: 4.0)"
+        "--refresh", type=float, default=3.0,
+        help="Dashboard refresh rate in Hz (default: 3.0)"
     )
 
     args = parser.parse_args()
     target_directory = os.path.abspath(args.dir)
 
-    console = Console()
+    # Enable native Windows 10 Virtual Terminal (ANSI) escape processing
+    enable_windows_vt()
+    console = Console(legacy_windows=False)
 
     # If --demo mode specified, reset environment first
     if args.demo:
@@ -398,32 +408,38 @@ def main():
             console.print(f"[yellow]Could not pre-reset: {e}[/yellow]")
 
     analyzer = OSAnalyzer(target_directory)
-    analyzer.start()
 
     # Launch background workload if --demo was requested
     if args.demo:
-        console.print(f"[bold green]Starting live dashboard. Launching {args.demo} workload in 2 seconds...[/bold green]")
+        demo_delay = 3.5
+        analyzer.demo_mode = args.demo
+        analyzer.demo_launch_time = time.time() + demo_delay
+
+        console.print(f"[bold green]Starting live dashboard. Launching {args.demo} workload in {demo_delay} seconds...[/bold green]")
         demo_thread = threading.Thread(
             target=launch_demo_workload,
-            args=(args.demo, target_directory),
+            args=(args.demo, target_directory, demo_delay),
             daemon=True
         )
         demo_thread.start()
 
+    analyzer.start()
+
     try:
-        # Alternate screen buffer with auto_refresh=False and redirect_stdout/stderr
-        # to guarantee zero terminal cursor jumping, bouncing, or mid-frame tearing.
+        # Alternate screen buffer with legacy_windows=False and redirect_stdout/stderr
+        # to guarantee zero terminal cursor jumping, bouncing, or top-to-bottom line wipe.
         with Live(
             generate_layout(analyzer, target_directory),
+            console=console,
             screen=True,
             auto_refresh=False,
             redirect_stdout=True,
             redirect_stderr=True
         ) as live:
+            live.refresh()
             while True:
                 time.sleep(1.0 / args.refresh)
-                live.update(generate_layout(analyzer, target_directory))
-                live.refresh()
+                live.update(generate_layout(analyzer, target_directory), refresh=True)
     except KeyboardInterrupt:
         pass
     finally:
