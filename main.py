@@ -110,30 +110,50 @@ def build_sync_panel(analyzer: OSAnalyzer) -> Panel:
     """
     Renders Module 4 (Threads & Concurrency / Process Synchronization).
     Displays the Bounded-Buffer state, Semaphore counters, and Mutex lock.
-    Streamlined 2-column layout prevents crowding on smaller terminal windows.
     """
     sync = analyzer.get_sync_telemetry()
     table = Table(box=box.SIMPLE_HEAD, expand=True, show_header=True)
     table.add_column("Synchronization Primitive (IPC)", style="green", ratio=3, no_wrap=True, overflow="ellipsis")
     table.add_column("State / Telemetry", style="white", ratio=2, no_wrap=True, overflow="ellipsis")
 
+    # Producer thread dynamic state
+    if sync.get("is_producing", False):
+        prod_styled = "[bold yellow]PRODUCING [wait(empty) -> signal(full)][/bold yellow]"
+    else:
+        prod_styled = "[cyan]LISTENING (Watchdog thread)[/cyan]"
+
+    # Consumer thread dynamic state
+    if sync.get("is_consuming", False):
+        cons_styled = "[bold green]CONSUMING [wait(full) -> signal(empty)][/bold green]"
+    else:
+        cons_styled = "[cyan]ACTIVE (Waiting on filled_slots)[/cyan]"
+
+    # Visual buffer occupancy slot bar (Capacity N=20)
+    buf_len = sync.get("buffer_len", 0)
+    capacity = sync.get("buffer_capacity", 20)
+    peak = sync.get("peak_occupancy", 0)
+    slots_visual = "■" * buf_len + "□" * (capacity - buf_len)
+    if buf_len > 0:
+        occ_styled = f"[bold yellow]{slots_visual} {buf_len}/{capacity} (Peak: {peak})[/bold yellow]"
+    else:
+        occ_styled = f"[dim]{slots_visual}[/dim] 0/{capacity} (Peak: {peak})"
+
     # Mutex lock state styling
     if sync.get("mutex_locked", False):
-        mutex_styled = "[bold red]LOCKED [BUSY][/bold red]"
+        mutex_styled = "[bold red]LOCKED [IN CRITICAL SECTION][/bold red]"
+    elif sync.get("is_producing", False) or sync.get("is_consuming", False):
+        mutex_styled = "[bold yellow]SYNCHRONIZED [MUTEX OK][/bold yellow]"
     else:
-        mutex_styled = "[bold green]UNLOCKED [OK][/bold green]"
+        mutex_styled = "[green]UNLOCKED [IDLE][/green]"
 
-    # Buffer occupancy styling
-    occ = sync.get("buffer_occupancy", "0/20")
-    occ_styled = f"[bold yellow]{occ}[/bold yellow]"
-
-    table.add_row("Producer Thread (Watchdog)", "[cyan]LISTENING[/cyan]")
-    table.add_row("Consumer Thread (OS Engine)", "[cyan]ACTIVE[/cyan]")
-    table.add_row("Bounded Buffer Queue", f"{occ_styled} (Capacity N=20)")
+    table.add_row("Producer Thread (Watchdog)", prod_styled)
+    table.add_row("Consumer Thread (OS Engine)", cons_styled)
+    table.add_row("Bounded Buffer Queue", occ_styled)
     table.add_row("empty_slots (Semaphore)", f"[cyan]{sync.get('empty_semaphore_val', 20)} vacant[/cyan]")
     table.add_row("filled_slots (Semaphore)", f"[magenta]{sync.get('full_semaphore_val', 0)} queued[/magenta]")
     table.add_row("mutex (Critical Section Lock)", mutex_styled)
-    table.add_row("IPC Events Synchronized", f"Prod: {sync.get('total_produced', 0)} | Cons: {sync.get('total_consumed', 0)}")
+    table.add_row("Last Synchronized IPC Event", f"[bold white]{sync.get('last_event_str', 'Awaiting Syscalls...')}[/bold white]")
+    table.add_row("IPC Events Synchronized", f"Prod: {sync.get('total_produced', 0)} | Cons: {sync.get('total_consumed', 0)} [green][OK][/green]")
 
     return Panel(
         table,
@@ -229,7 +249,7 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
     """
     # 1. Access Control Matrix Sub-Table (compact 3 rows)
     acm_table = Table(box=box.SIMPLE, expand=True, show_header=True, padding=(0, 1))
-    acm_table.add_column("Domain / Subject", style="cyan", width=20, no_wrap=True, overflow="ellipsis")
+    acm_table.add_column("Domain / Subject", width=30, no_wrap=True, overflow="ellipsis")
     acm_table.add_column("test_monitor_dir/*", style="white", no_wrap=True, overflow="ellipsis")
     acm_table.add_column(".os_journal/*", style="white", no_wrap=True, overflow="ellipsis")
 
@@ -238,13 +258,25 @@ def build_security_panel(analyzer: OSAnalyzer) -> Panel:
         dir_rights = objs.get("test_monitor_dir/*", "READ")
         jour_rights = objs.get(".os_journal/*", "NO_ACCESS")
 
-        if "REVOKED" in dir_rights:
+        if "REVOKED" in dir_rights or "NO_ACCESS" in dir_rights:
             dir_styled = f"[bold red]{dir_rights}[/bold red]"
+        elif "FLAGGED" in dir_rights:
+            dir_styled = f"[bold yellow]{dir_rights}[/bold yellow]"
         else:
             dir_styled = f"[green]{dir_rights}[/green]"
 
+        if "mock_encryptor" in subject:
+            if "REVOKED" in dir_rights or "DEAD" in subject:
+                subj_styled = f"[bold red]{subject}[/bold red]"
+            elif "FLAGGED" in dir_rights:
+                subj_styled = f"[bold yellow]{subject}[/bold yellow]"
+            else:
+                subj_styled = f"[bold green]{subject}[/bold green]"
+        else:
+            subj_styled = f"[cyan]{subject}[/cyan]"
+
         jour_styled = f"[dim]{jour_rights}[/dim]" if "NO_ACCESS" in jour_rights else f"[cyan]{jour_rights}[/cyan]"
-        acm_table.add_row(subject, dir_styled, jour_styled)
+        acm_table.add_row(subj_styled, dir_styled, jour_styled)
 
     # 2. Chronological OS Mechanism Action Log (Strictly latest 6 events)
     log_table = Table(box=box.SIMPLE, expand=True, show_header=True, padding=(0, 1))
